@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173fd4">
+  <meta name="description" content="Record measurements by voice. Hear each number and unit, correct it aloud, and save a measurement card.">
+  <title>Alavu · Your spoken measurement book</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Alavu home"><span class="brand-mark">a</span>alavu<span class="brand-script" lang="ml">അളവ്</span></a>
+    <span class="header-note">Your spoken measurement book</span>
+    <button class="text-button" id="help-button">How to use</button>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">KEEP YOUR HANDS ON THE TAPE</p><h1>Measure it.<br><span>Say it. Save it.</span></h1></div>
+      <p class="intro-copy">A blouse fitting, a window, your next project.<br>Speak the dimensions. We’ll keep the numbers.</p>
+    </section>
+    <div class="workspace">
+      <section class="voice-panel" aria-labelledby="voice-title">
+        <div class="panel-heading"><h2 id="voice-title">What are you measuring?</h2><span id="mode-badge" class="mode-badge">Microphone off</span></div>
+        <div class="setup">
+          <label>Template<select id="template"><option value="blouse">Blouse fitting</option><option value="window">Window</option><option value="custom">Custom measurements</option></select></label>
+          <label>Speech language<select id="language"><option value="en-IN">English · India</option><option value="ml-IN">Malayalam · Kerala</option><option value="hi-IN">Hindi · India</option></select></label>
+          <label>Default unit<select id="unit"><option value="">Ask each time</option><option value="in">Inches</option><option value="cm">Centimetres</option><option value="mm">Millimetres</option><option value="ft">Feet</option></select></label>
+        </div>
+        <div class="voice-center">
+          <button class="mic-button" id="mic-button" aria-label="Start microphone"><span class="mic-symbol" aria-hidden="true">●</span></button>
+          <p class="voice-status" id="voice-status" role="status">Ready when you are</p>
+          <p class="voice-hint" id="voice-hint">Tap the microphone, then say a field, a number and a unit.</p>
+          <p class="privacy-note">Browser speech recognition may send audio to its provider. Alavu stores confirmed cards on this device.</p>
+        </div>
+        <div class="transcript-box"><span class="small-label">LAST HEARD</span><p id="last-heard">Your words will appear here.</p></div>
+        <div class="response-box" aria-live="polite"><span class="small-label">ALAVU SAYS</span><p id="reply">Try “shoulder fourteen and a half inches.”</p></div>
+        <details class="transcript-input" id="transcript-details">
+          <summary>Use Wispr Flow or a text transcript</summary>
+          <p>Place your cursor here and dictate with Wispr Flow, or enter a transcript. This uses the same measurement parser.</p>
+          <form id="command-form"><label for="command">Transcript or command</label><div class="command-row"><input id="command" autocomplete="off" placeholder="Shoulder 14½ inches, sleeve 5½ inches"><button class="primary" type="submit">Use transcript</button></div></form>
+        </details>
+        <details class="sample-input"><summary>Try sample transcripts</summary><p class="secondary">Sample input · these buttons do not record speech.</p><div class="samples" id="samples"></div></details>
+      </section>
+      <section class="card-panel" aria-labelledby="card-heading">
+        <div class="card-topline"><span class="eyebrow">MEASUREMENT CARD</span><span class="card-number" id="card-number">Draft</span></div>
+        <div class="title-row"><h2 id="card-heading">Blouse fitting</h2><button id="new-card" class="text-button">New card</button></div>
+        <label class="name-field">Card name<input id="card-name" placeholder="For example, order 104 or living room" maxlength="80"></label>
+        <p class="card-state" id="card-state">Add your first measurement by speaking.</p>
+        <div class="measurements" id="measurements"></div>
+        <div id="pending" class="pending" hidden></div>
+        <div class="card-actions"><button id="review" class="secondary-button">Read back</button><button id="confirm" class="primary" disabled>Confirm &amp; save</button></div>
+        <p class="save-note">Review the values and units before saving. You can also say “review,” then “save.”</p>
+        <div class="recent-heading"><h3>Saved on this device</h3><button id="export" class="text-button">Export CSV</button></div>
+        <div id="saved-cards" class="saved-cards"><p class="empty-state">Your confirmed cards will appear here.</p></div>
+      </section>
+    </div>
+    <section class="command-guide" aria-label="Voice command examples"><div><span>CAPTURE</span><p>“Width 142 centimetres”</p></div><div><span>CORRECT</span><p>“Change width to 145 centimetres”</p></div><div><span>REVIEW &amp; SAVE</span><p>“Review” · “Save”</p></div><div><span>RETRIEVE</span><p>“Open card 104”</p></div></section>
+    <footer><span>Built for a billion voices. Starting with yours.</span><span>Alavu · Build for Bharat 2026</span></footer>
+  </main>
+  <dialog id="help-dialog"><h2>A fitting without the interruptions</h2><p>Choose a template, a speech language and an optional default unit. Tap the microphone and allow access when you are ready to speak.</p><p>Say “shoulder fourteen and a half inches, sleeve five and a half inches.” After the readback, speak a correction, or say “review” and then “save.” The microphone resumes after Alavu finishes speaking. Tap it again to stop.</p><p>Use Chrome on localhost or HTTPS with an internet connection. Malayalam and mixed-language recognition depend on the browser provider. Readback uses an available device voice and falls back to Indian English.</p><p>If recognition is unavailable, open “Use Wispr Flow or a text transcript.” You can dictate there with Flow. Sample transcripts are labeled separately.</p><p>Only confirmed cards are kept in this browser. Browser storage can be cleared, so export important measurements. Alavu keeps no audio recordings.</p><form method="dialog"><button class="primary">Got it</button></form></dialog>
+</body>
+</html>

@@ -1,0 +1,37 @@
+name: Validate Alavu
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test measurement behavior
+        run: npm test
+      - name: Start without secret keys
+        run: docker compose up --build -d
+      - name: Verify container serves the application
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl --fail --silent http://localhost:4173/ > /tmp/alavu.html; then
+              break
+            fi
+            sleep 2
+          done
+          test -s /tmp/alavu.html
+          grep -q 'Your spoken measurement book' /tmp/alavu.html
+          curl --fail --silent http://localhost:4173/app.js > /tmp/alavu-app.js
+          test -s /tmp/alavu-app.js
+      - name: Container logs
+        if: always()
+        run: docker compose logs
+      - name: Stop the container
+        if: always()
+        run: docker compose down
