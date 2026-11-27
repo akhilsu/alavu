@@ -1,4 +1,4 @@
-import { TEMPLATES, UNIT_NAMES, parseCommand, parseMeasurement, applyMeasurements, validateCard, readFields } from './measurements.js';
+import { TEMPLATES, UNIT_NAMES, parseCommand, parseMeasurement, applyMeasurements, validateCard, readFields, cardsToCSV } from './measurements.js';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'alavu.cards.v1';
@@ -59,6 +59,7 @@ function startRecognition() {
     setStatus('Listening to you', 'Say a measurement or a command. Tap the microphone to stop.');
   };
   engine.onresult = event => {
+    const finalTranscripts = [];
     for (let index = event.resultIndex; index < event.results.length; index++) {
       const result = event.results[index];
       $('last-heard').textContent = result[0].transcript;
@@ -67,9 +68,9 @@ function startRecognition() {
         respond('I could not hear that clearly. Please repeat the field, value and unit.');
         return;
       }
-      handleCommand(result[0].transcript, 'Live microphone');
-      return;
+      finalTranscripts.push(result[0].transcript);
     }
+    if (finalTranscripts.length) handleCommand(finalTranscripts.join(', '), 'Live microphone');
   };
   engine.onerror = event => {
     wantMicrophone = false;
@@ -341,9 +342,7 @@ $('export').addEventListener('click', () => {
   const saved = readStoredCards();
   const cards = Object.keys(current.fields).length && dirty ? [...saved, { ...current, id: 'unsaved-draft' }] : saved;
   if (!cards.length) return respond('Add a measurement or open a saved card before exporting.');
-  const quote = value => `"${String(value).replaceAll('"', '""')}"`;
-  const rows = [['card_id', 'name', 'field', 'value', 'unit'], ...cards.flatMap(card => Object.entries(card.fields).map(([label, field]) => [card.id, card.name, label, field.value, field.unit]))];
-  const blob = new Blob([rows.map(row => row.map(quote).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const blob = new Blob([cardsToCSV(cards)], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
