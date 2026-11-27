@@ -38,6 +38,8 @@ function setStatus(title, hint) {
 function stopRecognition() {
   if (recognition) {
     recognition.onend = null;
+    recognition.onerror = null;
+    recognition.onresult = null;
     recognition.abort();
     recognition = null;
   }
